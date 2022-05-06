@@ -1,0 +1,30 @@
+on first join:
+    set {false} to false
+    load yaml "plugins\Zhanan001\Whitelist2.0\Whiteplayer-%player%.yml" as "Whiteplayer"
+    set yaml value "canijoin" from "Whiteplayer" to {false}
+    save yaml "Whiteplayer"
+on join: 
+    wait 3 seconds
+    load yaml "plugins\Zhanan001\Whitelist2.0\Whiteplayer-%player%.yml" as "Whiteplayer-%player%"
+    yaml "Whiteplayer-%player%" is empty:
+        set yaml value "canijoin" from "Whiteplayer-%player%" to {false}
+        send "&2检测到非第一次进服玩家%event-player%的白名单配置文件为空，正在创建..."
+    save yaml "Whiteplayer-%player%"
+    set {_canijoin} to yaml value "canijoin" from "Whiteplayer-%player%"
+    if {_canijoin} is false:
+        command "/kick %event-player% 如果您想加入服务器，请前往官方群：643432459申请,如果您已经在群，请去申请名单"
+command /whitea <text>:
+    trigger:
+        set {true} to true
+        set {_wplayer} to arg 1
+        load yaml "plugins\Zhanan001\Whitelist2.0\Whiteplayer-%{_wplayer}%.yml" as "Whiteplayer-%{_wplayer}%"
+        set yaml value "canijoin" from "Whiteplayer-%{_wplayer}%" to {true}
+        send "&6玩家&4%{_wplayer}%&6已经添加到白名单了" to console
+        save yaml "Whiteplayer-%{_wplayer}%"
+command /whiter <text>:
+    trigger:
+        set {_wplayer} to arg 1
+        load yaml "plugins\Zhanan001\Whitelist2.0\Whiteplayer-%{_wplayer}%.yml" as "Whiteplayer-%{_wplayer}%"
+        set yaml value "canijoin" from "Whiteplayer-%{_wplayer}%" to {false}
+        send "&6玩家&4%{_wplayer}%&6已经移除白名单了" to console
+        save yaml "Whiteplayer-%{_wplayer}%"
